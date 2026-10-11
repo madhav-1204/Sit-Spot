@@ -77,6 +77,9 @@ def generate_session_prompt(time_of_day, month, last_notes="None yet"):
         result = query_ollama(formatted_prompt, temperature=0.8)
         if result:
             cleaned = result.strip('"').strip("'").strip()
+            # If model echoed prompt or prefixes
+            if cleaned.lower().startswith("prompt:"):
+                cleaned = cleaned[7:].strip()
             return cleaned, True, None
     except requests.exceptions.ConnectionError:
         return get_fallback_prompt(), False, "Ollama is not running. Using an offline fallback prompt."
@@ -95,15 +98,37 @@ def tidy_notes(raw_notes):
     try:
         result = query_ollama(formatted_prompt, temperature=0.3)
         if result:
-            lines = result.splitlines()
+            # Clean possible model prefix
+            cleaned = result.strip()
+            if cleaned.lower().startswith("rewrite:"):
+                cleaned = cleaned[8:].strip()
+
+            lines = [l.strip() for l in cleaned.splitlines() if l.strip()]
             body_lines = []
             follow_up = None
+
             for line in lines:
-                if line.strip().lower().startswith("next time:"):
-                    follow_up = line.strip()[10:].strip()
-                elif line.strip():
-                    body_lines.append(line.strip())
-            tidy_text = " ".join(body_lines)
+                if line.lower().startswith("next time:"):
+                    follow_up = line[10:].strip()
+                elif line.lower().startswith("question:"):
+                    follow_up = line[9:].strip()
+                else:
+                    body_lines.append(line)
+
+            # If no follow-up identified yet, check if the last sentence of body is a question
+            tidy_text = " ".join(body_lines).strip()
+            if not follow_up and "?" in tidy_text:
+                parts = tidy_text.split("?")
+                if len(parts) >= 2 and parts[-1].strip() == "":
+                    # The last sentence ended with ?
+                    # Find where the question started
+                    prev_sentences = parts[-2].rsplit(".", 1)
+                    if len(prev_sentences) == 2:
+                        tidy_text = prev_sentences[0].strip() + "."
+                        follow_up = prev_sentences[1].strip() + "?"
+                    else:
+                        follow_up = parts[-2].strip() + "?"
+
             return tidy_text, follow_up, True, None
     except requests.exceptions.ConnectionError:
         return None, None, False, "Ollama is not running. Showing raw notes only."
