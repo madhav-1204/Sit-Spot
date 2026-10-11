@@ -9,7 +9,7 @@ Built during **Hacktoberfest Week 1 (Oct 5–11, 2026)** for the *"Touch Grass"*
 ## Setup in 4 Commands
 
 ```bash
-git clone https://github.com/your-username/sit-spot.git
+git clone https://github.com/madhav-1204/Sit-Spot.git
 cd sit-spot
 pip install -r requirements.txt
 python app.py
