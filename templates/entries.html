@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Past entries</h2>
+
+{% if entries %}
+  <div style="margin-bottom: 2rem;">
+    <form action="{{ url_for('look_back') }}" method="POST">
+      <button type="submit" class="btn btn-secondary">What keeps showing up</button>
+    </form>
+  </div>
+
+  {% if summary %}
+    <div class="summary-card">
+      <h3 style="font-size: 1rem; margin-bottom: 0.5rem; color: var(--accent);">Pattern summary across recent sessions</h3>
+      <p style="white-space: pre-wrap; margin-bottom: 0;">{{ summary }}</p>
+    </div>
+  {% endif %}
+
+  {% for entry in entries %}
+    <div class="entry-card">
+      <div class="entry-meta">
+        <span>{{ entry.created_at[:10] }} at {{ entry.created_at[11:16] }}</span>
+        <span>
+          Outside: <strong>{{ (entry.outside_seconds // 60) }}m</strong> &middot; 
+          Screen: <strong>{{ (entry.screen_seconds // 60) }}m</strong>
+          {% if entry.outside_seconds > 0 %}
+            <span class="muted">({{ ((entry.outside_seconds / (entry.outside_seconds + entry.screen_seconds + 1)) * 100)|round|int }}% off screen)</span>
+          {% endif %}
+        </span>
+      </div>
+
+      <div class="entry-prompt">
+        &ldquo;{{ entry.prompt }}&rdquo;
+      </div>
+
+      {% if entry.is_raw_only or not entry.tidy_entry %}
+        <div class="entry-tag">Raw notes</div>
+        <p class="entry-text" style="white-space: pre-wrap;">{{ entry.raw_notes }}</p>
+      {% else %}
+        <p class="entry-text" style="white-space: pre-wrap;">{{ entry.tidy_entry }}</p>
+
+        {% if entry.follow_up %}
+          <div class="follow-up-box" style="margin-bottom: 1rem;">
+            <strong>Next time:</strong> {{ entry.follow_up }}
+          </div>
+        {% endif %}
+
+        <details style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-muted);">
+          <summary style="cursor: pointer;">Original rough notes</summary>
+          <p style="margin-top: 0.5rem; white-space: pre-wrap; color: var(--text);">{{ entry.raw_notes }}</p>
+        </details>
+      {% endif %}
+    </div>
+  {% endfor %}
+{% else %}
+  <p class="muted">No entries saved yet. Choose a duration on the home page to start your first session.</p>
+{% endif %}
+{% endblock %}

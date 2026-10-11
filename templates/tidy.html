@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Review entry</h2>
+
+{% if error_message %}
+  <div class="notice">{{ error_message }}</div>
+{% endif %}
+
+<div class="muted" style="margin-bottom: 1.5rem; font-size: 0.9rem;">
+  Outside: <strong>{{ (outside_seconds // 60) }}m {{ (outside_seconds % 60) }}s</strong> &middot; Screen: <strong>{{ (screen_seconds // 60) }}m {{ (screen_seconds % 60) }}s</strong>
+</div>
+
+<form action="{{ url_for('save_final_entry') }}" method="POST">
+  <input type="hidden" name="target_minutes" value="{{ target_minutes }}">
+  <input type="hidden" name="prompt" value="{{ prompt }}">
+  <input type="hidden" name="outside_seconds" value="{{ outside_seconds }}">
+  <input type="hidden" name="screen_seconds" value="{{ screen_seconds }}">
+
+  <div class="columns-split">
+    <div class="column">
+      <h3>Raw notes</h3>
+      <textarea name="raw_notes" rows="8">{{ raw_notes }}</textarea>
+    </div>
+
+    <div class="column">
+      <h3>Tidy version</h3>
+      <textarea name="tidy_entry" rows="8">{% if tidy_entry %}{{ tidy_entry }}{% else %}{{ raw_notes }}{% endif %}</textarea>
+    </div>
+  </div>
+
+  <div class="follow-up-box">
+    <label for="follow_up"><strong>Follow-up question for next time:</strong></label>
+    <input type="text" id="follow_up" name="follow_up" value="{{ follow_up or '' }}" style="width: 100%; padding: 0.5rem; margin-top: 0.35rem; border: 1px solid var(--border); border-radius: 4px; font-family: inherit; font-size: 0.95rem;">
+  </div>
+
+  <div class="btn-group" style="margin-top: 2rem;">
+    <button type="submit" name="action" value="save_both" class="btn">Save entry</button>
+    <button type="submit" name="action" value="save_raw_only" class="btn btn-secondary">Discard tidy (save raw only)</button>
+  </div>
+</form>
+{% endblock %}

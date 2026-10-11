@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Rough notes</h2>
+<p class="muted">2 to 5 lines is enough. Typos are fine.</p>
+
+<p class="muted" style="font-size: 0.88rem;">Time outside: {{ outside_minutes }} minute{{ 's' if outside_minutes != 1 else '' }} (target: {{ target_minutes }}m)</p>
+
+<form action="{{ url_for('tidy_view') }}" method="POST">
+  <input type="hidden" name="target_minutes" value="{{ target_minutes }}">
+  <input type="hidden" name="prompt" value="{{ prompt }}">
+  <input type="hidden" name="outside_seconds" value="{{ outside_seconds }}">
+  <input type="hidden" name="prompt_screen_seconds" value="{{ prompt_screen_seconds }}">
+  <input type="hidden" name="notes_start_timestamp" value="{{ notes_start_timestamp }}">
+
+  <label for="raw_notes" style="display: none;">Rough notes</label>
+  <textarea id="raw_notes" name="raw_notes" rows="6" placeholder="Spotted a blue jay on the fence. Cold breeze from the north. Soil still damp." required autofocus></textarea>
+
+  <div class="btn-group">
+    <button type="submit" name="action" value="tidy" class="btn">Tidy notes</button>
+    <button type="submit" name="action" value="save_raw" class="btn btn-secondary">Save raw only</button>
+  </div>
+</form>
+{% endblock %}

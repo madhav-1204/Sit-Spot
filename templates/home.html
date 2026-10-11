@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<p class="muted">A quiet offline journal for short sit-outside sessions. Stepping away from the screen is the main point.</p>
+
+<div style="margin: 2rem 0; padding: 1.25rem; background: var(--surface); border: 1px solid var(--border-light); border-radius: 4px;">
+  <p style="margin-bottom: 0.25rem;"><strong>{{ count }}</strong> session{{ 's' if count != 1 else '' }} so far.</p>
+  {% if last_entry %}
+    <p class="muted" style="margin-bottom: 0;">Last entry: {{ last_entry.created_at[:10] }} ({{ (last_entry.outside_seconds // 60) }}m outside)</p>
+  {% else %}
+    <p class="muted" style="margin-bottom: 0;">No sessions recorded yet.</p>
+  {% endif %}
+</div>
+
+<form action="{{ url_for('start_session') }}" method="POST">
+  <div class="duration-selector">
+    <p>Target outside time:</p>
+    <fieldset>
+      <label>
+        <input type="radio" name="duration" value="5"> 5 minutes
+      </label>
+      <label>
+        <input type="radio" name="duration" value="10" checked> 10 minutes
+      </label>
+      <label>
+        <input type="radio" name="duration" value="20"> 20 minutes
+      </label>
+    </fieldset>
+  </div>
+
+  <div style="margin-top: 2rem;">
+    <button type="submit" class="btn">Go outside</button>
+  </div>
+</form>
+{% endblock %}

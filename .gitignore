@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+
+# Database
+sitspot.db
+*.sqlite3
+*.db-journal
+
+# Environments
+.env
+
+# OS
+.DS_Store
+Thumbs.db

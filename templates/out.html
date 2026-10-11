@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if error_message %}
+  <div class="notice">{{ error_message }}</div>
+{% endif %}
+
+<div class="out-screen">
+  <p class="away-message">phone away</p>
+
+  <div class="out-prompt">
+    {{ prompt }}
+  </div>
+
+  <p class="muted">Started at {{ start_time_display }} (target: {{ target_minutes }} min)</p>
+
+  <form action="{{ url_for('back_session') }}" method="POST" style="margin-top: 2.5rem;">
+    <input type="hidden" name="target_minutes" value="{{ target_minutes }}">
+    <input type="hidden" name="prompt" value="{{ prompt }}">
+    <input type="hidden" name="start_timestamp" value="{{ start_timestamp }}">
+    <input type="hidden" name="prompt_screen_seconds" value="{{ prompt_screen_seconds }}">
+    <button type="submit" class="btn">I'm back</button>
+  </form>
+</div>
+{% endblock %}

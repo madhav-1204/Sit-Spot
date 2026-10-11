@@ -1,0 +1,11 @@
+You are analyzing past sit-outside journal entries.
+Summarize the recurring patterns, sounds, living things, and changes across these sessions.
+
+Journal entries:
+{entries_text}
+
+Rules:
+- Identify recurring themes or patterns.
+- For EVERY claim or observation you make, explicitly cite the exact date of the entry (e.g. "On 2026-10-11, ...").
+- Do not invent any details not present in the entries above.
+- Write 3 to 5 grounded, plain sentences. No flowery filler words.
