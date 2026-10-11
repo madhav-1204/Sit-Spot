@@ -18,3 +18,10 @@
   - Tidy: side-by-side editable raw and tidy notes, follow-up reflection question, screen vs outside time metrics, save / discard options.
   - Look Back: past entries list, "What keeps showing up" pattern summary citing exact entry dates.
 - Automated testing: built test suites in `tests/` covering database persistence, graceful fallback, and all user flow routes. 10/10 tests passed.
+
+## 2026-10-11 (polish)
+- Entries page and tidy page: changed time display to "Outside: X min. On screen: about Y min." where X is the actual elapsed time (outside_seconds ÷ 60) and Y is approximate cumulative screen seconds across prompt, notes, and tidy pages divided by 60.
+- Added a footer on every page via `base.html`: "Running locally with <model> through Ollama. No internet needed." Model name is read from the `SITSPOT_MODEL` env var at runtime via a Flask context processor — never hard-coded.
+- Home page: when entry count is zero, shows only "No sessions yet." When non-zero, shows count and the date of the last session. Removed the duplicate "No sessions recorded yet." line that previously appeared alongside the count.
+- Tidy page: added the small line "Written by the model from your notes. Check it against your raw notes." directly under the "Tidy version" heading.
+- Database: added `actual_minutes` as a first-class integer column (stored as `max(1, outside_seconds // 60)` at save time). Added an `ALTER TABLE` migration so existing databases gain the column automatically on next start.

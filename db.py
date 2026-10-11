@@ -17,6 +17,7 @@ def init_db():
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 created_at TEXT NOT NULL,
                 target_minutes INTEGER NOT NULL,
+                actual_minutes INTEGER NOT NULL DEFAULT 0,
                 outside_seconds INTEGER NOT NULL,
                 screen_seconds INTEGER NOT NULL,
                 prompt TEXT NOT NULL,
@@ -26,6 +27,11 @@ def init_db():
                 is_raw_only INTEGER DEFAULT 0
             )
         """)
+        # Migration: add actual_minutes if it doesn't exist yet
+        try:
+            conn.execute("ALTER TABLE entries ADD COLUMN actual_minutes INTEGER NOT NULL DEFAULT 0")
+        except Exception:
+            pass  # Column already exists
     conn.close()
 
 def get_entry_count():
@@ -70,15 +76,16 @@ def get_entry(entry_id):
 
 def save_entry(target_minutes, outside_seconds, screen_seconds, prompt, raw_notes, tidy_entry=None, follow_up=None, is_raw_only=0):
     created_at = datetime.now().isoformat()
+    actual_minutes = max(1, outside_seconds // 60)
     conn = get_connection()
     with conn:
         cur = conn.execute("""
             INSERT INTO entries (
-                created_at, target_minutes, outside_seconds, screen_seconds,
+                created_at, target_minutes, actual_minutes, outside_seconds, screen_seconds,
                 prompt, raw_notes, tidy_entry, follow_up, is_raw_only
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
-            created_at, target_minutes, outside_seconds, screen_seconds,
+            created_at, target_minutes, actual_minutes, outside_seconds, screen_seconds,
             prompt, raw_notes, tidy_entry, follow_up, is_raw_only
         ))
         entry_id = cur.lastrowid

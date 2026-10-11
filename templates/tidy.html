@@ -8,7 +8,7 @@
 {% endif %}
 
 <div class="muted" style="margin-bottom: 1.5rem; font-size: 0.9rem;">
-  Outside: <strong>{{ (outside_seconds // 60) }}m {{ (outside_seconds % 60) }}s</strong> &middot; Screen: <strong>{{ (screen_seconds // 60) }}m {{ (screen_seconds % 60) }}s</strong>
+  Outside: <strong>{{ (outside_seconds // 60) }} min</strong> &middot; On screen: about <strong>{{ (screen_seconds // 60) }} min</strong>
 </div>
 
 <form action="{{ url_for('save_final_entry') }}" method="POST">
@@ -25,6 +25,7 @@
 
     <div class="column">
       <h3>Tidy version</h3>
+      <p class="muted" style="font-size: 0.8rem; margin: 0 0 0.4rem;">Written by the model from your notes. Check it against your raw notes.</p>
       <textarea name="tidy_entry" rows="8">{% if tidy_entry %}{{ tidy_entry }}{% else %}{{ raw_notes }}{% endif %}</textarea>
     </div>
   </div>

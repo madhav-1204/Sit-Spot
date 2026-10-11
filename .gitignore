@@ -17,3 +17,12 @@ sitspot.db
 # OS
 .DS_Store
 Thumbs.db
+
+NOTES.md
+SUBMISSION.md
+*.NOTES.md
+*.SUBMISSION.md
+
+# Media
+*.mp4
+*.mov

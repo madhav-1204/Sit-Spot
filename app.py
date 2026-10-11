@@ -9,6 +9,10 @@ import ollama_client
 app = Flask(__name__)
 app.secret_key = "sit-spot-local-dev-key"
 
+@app.context_processor
+def inject_model_name():
+    return {"sitspot_model": ollama_client.get_model_name()}
+
 def get_time_of_day():
     hour = datetime.now().hour
     if 5 <= hour < 12:
@@ -32,9 +36,19 @@ def home():
 @app.route("/start", methods=["POST"])
 def start_session():
     screen_t0 = time.time()
-    try:
-        target_minutes = int(request.form.get("duration", 10))
-    except ValueError:
+    custom_duration = request.form.get("custom_duration", "").strip()
+    if custom_duration:
+        try:
+            target_minutes = int(custom_duration)
+        except ValueError:
+            target_minutes = 10
+    else:
+        try:
+            target_minutes = int(request.form.get("duration", 10))
+        except ValueError:
+            target_minutes = 10
+
+    if target_minutes <= 0:
         target_minutes = 10
 
     time_of_day = get_time_of_day()

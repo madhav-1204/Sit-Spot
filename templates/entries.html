@@ -21,13 +21,7 @@
     <div class="entry-card">
       <div class="entry-meta">
         <span>{{ entry.created_at[:10] }} at {{ entry.created_at[11:16] }}</span>
-        <span>
-          Outside: <strong>{{ (entry.outside_seconds // 60) }}m</strong> &middot; 
-          Screen: <strong>{{ (entry.screen_seconds // 60) }}m</strong>
-          {% if entry.outside_seconds > 0 %}
-            <span class="muted">({{ ((entry.outside_seconds / (entry.outside_seconds + entry.screen_seconds + 1)) * 100)|round|int }}% off screen)</span>
-          {% endif %}
-        </span>
+        <span>Outside: <strong>{{ entry.actual_minutes if entry.actual_minutes else (entry.outside_seconds // 60) }} min</strong> &middot; On screen: about <strong>{{ (entry.screen_seconds // 60) }} min</strong></span>
       </div>
 
       <div class="entry-prompt">
